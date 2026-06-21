@@ -67,12 +67,11 @@ export function formatCarbonCompact(kg: number): [string, string] {
  * formatPercentageChange(-8.3)   → "-8.3% ↓"
  * formatPercentageChange(0)      → "0.0% →"
  */
-export function formatPercentageChange(percentage: number, inverted = true): string {
+export function formatPercentageChange(percentage: number): string {
   const sign = percentage > 0 ? '+' : ''
   const arrow = percentage > 0 ? '↑' : percentage < 0 ? '↓' : '→'
   // inverted is preserved in the signature for callers that pass it
   // for semantic documentation; arrow direction is always numerical.
-  void inverted
   return `${sign}${percentage.toFixed(1)}% ${arrow}`
 }
 
