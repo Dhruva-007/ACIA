@@ -1,0 +1,71 @@
+# ─── Credentials & Secrets ───────────────────────────────────────────────────
+# These files contain sensitive credentials and must NEVER be committed.
+
+service-account-key.json
+*-service-account.json
+gcloud-credentials.json
+*.pem
+*.key
+
+# Environment files with actual values
+.env
+.env.local
+.env.production
+.env.*.local
+
+# ─── Firebase ────────────────────────────────────────────────────────────────
+
+.firebase/
+.firebaserc.local
+
+# ─── Node / Frontend ─────────────────────────────────────────────────────────
+
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/.env
+frontend/.env.local
+frontend/.env.production
+
+# ─── Python / Backend ────────────────────────────────────────────────────────
+
+backend/.venv/
+backend/venv/
+backend/env/
+backend/__pycache__/
+backend/**/__pycache__/
+backend/**/*.pyc
+backend/**/*.pyo
+backend/.pytest_cache/
+backend/.mypy_cache/
+backend/htmlcov/
+backend/.coverage
+backend/dist/
+backend/build/
+backend/*.egg-info/
+backend/service-account-key.json
+backend/.env
+
+# ─── IDE & OS ────────────────────────────────────────────────────────────────
+
+.vscode/settings.json
+.vscode/launch.json
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ─── Logs ────────────────────────────────────────────────────────────────────
+
+*.log
+logs/
+npm-debug.log*
+
+# ─── Test Artifacts ──────────────────────────────────────────────────────────
+
+coverage/
+frontend/coverage/
+e2e_results.json

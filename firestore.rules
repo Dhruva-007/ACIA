@@ -1,0 +1,64 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny: reject all access not explicitly granted
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // User data isolation: users can only access their own data
+    match /users/{uid} {
+      allow read, write: if request.auth != null
+                         && request.auth.uid == uid;
+
+      // User profile document
+      match /profile {
+        allow read, write: if request.auth != null
+                           && request.auth.uid == uid;
+      }
+
+      // Lifestyle inputs document
+      match /lifestyle {
+        allow read, write: if request.auth != null
+                           && request.auth.uid == uid;
+      }
+
+      // Daily emission records sub-collection
+      match /emissions/{emissionId} {
+        allow read, write: if request.auth != null
+                           && request.auth.uid == uid;
+      }
+
+      // Recommendations sub-collection
+      match /recommendations/{recommendationId} {
+        allow read, write: if request.auth != null
+                           && request.auth.uid == uid;
+      }
+
+      // Behavioral weights document
+      match /behavioral_weights {
+        allow read, write: if request.auth != null
+                           && request.auth.uid == uid;
+      }
+
+      // Behavioral history sub-collection
+      match /behavioral_history/{eventId} {
+        allow read, write: if request.auth != null
+                           && request.auth.uid == uid;
+      }
+
+      // Monthly CII scores sub-collection
+      match /cii_scores/{monthId} {
+        allow read, write: if request.auth != null
+                           && request.auth.uid == uid;
+      }
+
+      // Conversation history sub-collection
+      match /conversations/{sessionId} {
+        allow read, write: if request.auth != null
+                           && request.auth.uid == uid;
+      }
+    }
+  }
+}
