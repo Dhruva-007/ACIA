@@ -1,0 +1,1 @@
+"""Emission factors package."""
