@@ -1,0 +1,67 @@
+# ─── Credentials & Secrets ───────────────────────────────────────────────────
+# Service account key — contains private credentials for Google Cloud.
+# NEVER commit this file under any circumstances.
+
+service-account-key.json
+*-service-account.json
+*.pem
+*.key
+
+# Environment files with actual secret values
+.env
+.env.production
+*.env
+
+# ─── Python Virtual Environment ──────────────────────────────────────────────
+
+.venv/
+venv/
+env/
+ENV/
+
+# ─── Python Bytecode & Cache ─────────────────────────────────────────────────
+
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.pyo
+
+# ─── Testing & Coverage ──────────────────────────────────────────────────────
+
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+*.cover
+
+# ─── Type Checking ───────────────────────────────────────────────────────────
+
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# ─── Build Artifacts ─────────────────────────────────────────────────────────
+
+dist/
+build/
+*.egg-info/
+*.egg
+
+# ─── IDE ─────────────────────────────────────────────────────────────────────
+
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# ─── OS ──────────────────────────────────────────────────────────────────────
+
+.DS_Store
+Thumbs.db
+
+# ─── Logs ────────────────────────────────────────────────────────────────────
+
+*.log
+logs/
