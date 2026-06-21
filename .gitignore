@@ -69,3 +69,5 @@ npm-debug.log*
 coverage/
 frontend/coverage/
 e2e_results.json
+e2e_test.cjs
+e2e_test.js
