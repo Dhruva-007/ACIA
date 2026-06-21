@@ -251,10 +251,11 @@ composite = (
     convenience_score   × 0.10 +
     lifestyle_score     × 0.10
 )
+```
 
 Template Memory System: Every recommendation template has a unique stable ID tracked in Firestore. After 2 rejections, the template is permanently filtered. The system never re-shows what you've already rejected.
 
-3. Behavioral Learning Engine
+### 3. Behavioral Learning Engine
 Updates per-category and per-sub-type weights after every user interaction.
 
 Action	Category Delta	Sub-type Delta
@@ -265,13 +266,13 @@ Rejected	-0.20	-0.25 (strongest negative)
 Deferred	0.00	0.00 (neutral)
 Weekly decay of 5% toward neutral prevents permanent category exclusion.
 
-4. Future Carbon Prediction Engine
+### 4. Future Carbon Prediction Engine
 Projects 6 or 12-month emission trajectory using linear regression on recent data.
 
 Red line (dashed): Current trajectory if behavior continues
 Green line (solid): Reduction path with top recommendations adopted
 Green line is always meaningful — minimum 20% floor prevents display bugs
-5. Carbon Impact Simulator
+### 5. Carbon Impact Simulator
 Interactive "what if" scenarios with verified CO₂e calculations:
 
 Replace car trips with public transport
@@ -280,7 +281,7 @@ Work remotely
 Switch to renewable energy
 Scenario Planner: Combine multiple actions to see combined monthly/annual savings and milestone achievement dates (When do you reach the Paris Agreement target?).
 
-6. AI Sustainability Assistant
+### 6. AI Sustainability Assistant
 Vertex AI Gemini 2.5 Flash with user-specific system prompt injection. Every response references the user's actual data — not generic advice.
 
 System prompt injects:
@@ -289,7 +290,7 @@ Daily commute distance and transport mode
 Monthly CO₂e by category
 CII score and primary emission source
 Behavioral history and declined categories
-7. Carbon Improvement Index (CII)
+### 7. Carbon Improvement Index (CII)
 Composite score (0-100) measuring the sustainability journey, not just emissions.
 
 Sub-score	Weight	What It Measures
@@ -297,7 +298,7 @@ Awareness	25%	Engagement with understanding emissions
 Action	25%	Accepting and completing recommendations
 Consistency	25%	Sustained behavioral engagement over time
 Improvement	25%	Measurable emission reductions
-8. Carbon Budget System
+### 8. Carbon Budget System
 Monthly budget = current footprint × 0.90 (10% reduction target)
 
 Real-time progress bar showing daily rate vs budget
@@ -342,7 +343,7 @@ ACIA follows accessibility-focused design principles including keyboard navigati
 
 ---
 
-## Local Development
+### Local Development
 Prerequisites
 Python 3.11+
 Node.js 18+
@@ -353,38 +354,37 @@ Bash
 
 cd backend
 
-# Create virtual environment
+### Create virtual environment
 python -m venv .venv
 .venv\Scripts\activate.bat  # Windows
 source .venv/bin/activate   # Linux/Mac
 
-# Install dependencies
+### Install dependencies
 pip install -r requirements.txt
 
-# Configure environment
+### Configure environment
 cp .env.example .env
-# Fill in .env with your Firebase and Google Cloud credentials
+#### Fill in .env with your Firebase and Google Cloud credentials
 
-# Run development server
+### Run development server
 uvicorn main:app --reload --port 8000
 Frontend Setup
 Bash
 
 cd frontend
 
-# Install dependencies
+### Install dependencies
 npm install
 
-# Configure environment
+### Configure environment
 cp .env.example .env.local
-# Fill in .env.local with Firebase config values
+#### Fill in .env.local with Firebase config values
 
-# Run development server
+### Run development server
 npm run dev
-Environment Variables
-Backend (backend/.env):
 
-env
+## Environment Variables
+#### Backend (backend/.env):
 
 FIREBASE_PROJECT_ID=your-project-id
 GOOGLE_APPLICATION_CREDENTIALS=./service-account-key.json
@@ -392,17 +392,17 @@ VERTEX_AI_PROJECT_ID=your-project-id
 VERTEX_AI_LOCATION=us-central1
 VERTEX_AI_MODEL=gemini-2.5-flash
 ENVIRONMENT=development
-Frontend (frontend/.env.local):
 
-env
+#### Frontend (frontend/.env.local):
 
 VITE_FIREBASE_API_KEY=your-api-key
 VITE_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
 VITE_FIREBASE_PROJECT_ID=your-project-id
 VITE_FIREBASE_APP_ID=your-app-id
 VITE_API_BASE_URL=http://localhost:8000
-Deployment
-Backend — Google Cloud Run
+
+### Deployment
+#### Backend — Google Cloud Run
 Bash
 
 gcloud run deploy acia-backend \
@@ -412,50 +412,46 @@ gcloud run deploy acia-backend \
   --allow-unauthenticated \
   --service-account=acia-backend-sa@PROJECT_ID.iam.gserviceaccount.com \
   --set-env-vars="ENVIRONMENT=production,FIREBASE_PROJECT_ID=PROJECT_ID,VERTEX_AI_PROJECT_ID=PROJECT_ID"
-Frontend — Firebase Hosting
+
+#### Frontend — Firebase Hosting
 Bash
 
 cd frontend
 npm run build
 cd ..
 firebase deploy --only hosting
-API Reference
-All endpoints return a standard envelope:
 
-JSON
+### Key Endpoints
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | /api/v1/profile/setup | Initial onboarding — calculates first CO₂e footprint |
+| GET | /api/v1/carbon/summary | Dashboard summary with benchmarks and trend |
+| GET	| /api/v1/carbon/history | Emission history (daily/weekly/monthly/yearly) |
+| GET |	/api/v1/recommendations	| Ranked personalized recommendations |
+| POST | /api/v1/behavior/feedback | Behavioral feedback (accept/reject/complete/fail) |
+| POST | /api/v1/simulator/run | Run a single lifestyle change simulation |
+| POST | /api/v1/simulator/plan |	Multi-action scenario plan with milestone dates |
+| GET | /api/v1/prediction/trajectory |	12-month emission trajectory |
+| POST | /api/v1/assistant/chat |	AI sustainability assistant (rate limited 20/hr) |
+| GET |	/api/v1/cii/current |	Carbon Improvement Index score |
+| POST | /api/v1/narrative/generate |	Generate AI weekly carbon narrative |
+| POST | /api/v1/explainer/category |	AI explanation for category calculation |
 
-{
-  "success": true,
-  "data": { ... },
-  "message": "Operation completed",
-  "timestamp": "2024-01-15T10:30:00Z"
-}
-Key Endpoints
-Method	Endpoint	Description
-POST	/api/v1/profile/setup	Initial onboarding — calculates first CO₂e footprint
-GET	/api/v1/carbon/summary	Dashboard summary with benchmarks and trend
-GET	/api/v1/carbon/history	Emission history (daily/weekly/monthly/yearly)
-GET	/api/v1/recommendations	Ranked personalized recommendations
-POST	/api/v1/behavior/feedback	Behavioral feedback (accept/reject/complete/fail)
-POST	/api/v1/simulator/run	Run a single lifestyle change simulation
-POST	/api/v1/simulator/plan	Multi-action scenario plan with milestone dates
-GET	/api/v1/prediction/trajectory	12-month emission trajectory
-POST	/api/v1/assistant/chat	AI sustainability assistant (rate limited 20/hr)
-GET	/api/v1/cii/current	Carbon Improvement Index score
-POST	/api/v1/narrative/generate	Generate AI weekly carbon narrative
-POST	/api/v1/explainer/category	AI explanation for category calculation
-Emission Factors — Scientific Sources
+
+### Emission Factors — Scientific Sources
 All CO₂e calculations use peer-reviewed, government-verified sources:
 
-Category	Source	Key Values
-Transport	UK Government GHG Conversion Factors 2023	Petrol: 0.21, Diesel: 0.17, EV: 0.05, Bus: 0.089 kg CO₂e/km
-Energy	UK Government GHG Conversion Factors 2023	Grid: 0.233, Renewable: 0.012, Gas: 0.184 kg CO₂e/kWh
-Food	IPCC AR6 WG3 (2022) + Poore & Nemecek (2018)	Beef: 6.0, Chicken: 0.9, Vegan meal: 0.2 kg CO₂e/meal
-Shopping	Berners-Lee (2020) "How Bad Are Bananas?"	Moderate shopping: 35 kg CO₂e/month baseline
+| Category | Source |	Key Values |
+|---|---|---|
+| Transport | UK Government GHG Conversion Factors 2023 |	Petrol: 0.21, Diesel: 0.17, EV: 0.05, Bus: 0.089 kg CO₂e/km |
+| Energy | UK Government GHG Conversion Factors 2023 | Grid: 0.233, Renewable: 0.012, Gas: 0.184 kg CO₂e/kWh |
+| Food | IPCC AR6 WG3 (2022) + Poore & Nemecek (2018) | Beef: 6.0, Chicken: 0.9, Vegan meal: 0.2 kg CO₂e/meal |
+| Shopping | Berners-Lee (2020) "How Bad Are Bananas?" |Moderate shopping: 35 kg CO₂e/month baseline |
+
 All food values use kg CO₂e including methane (CH₄, GWP100 = 27.9) from livestock enteric fermentation as per IPCC AR6. This is scientifically correct and significantly higher than CO₂-only values for red meat.
 
-The Behavioral Intelligence Loop
-text
+
+### The Behavioral Intelligence Loop
 
 User completes onboarding
          │
@@ -487,6 +483,3 @@ Next recommendation request uses updated weights
 CII Score updates reflecting behavioral change
          │
          └── Loop continues, system learns, user improves
-
-License
-MIT License — see LICENSE for details.
