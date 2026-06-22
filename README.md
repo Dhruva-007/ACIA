@@ -149,41 +149,6 @@ ACIA addresses every dimension of the problem statement:
 
 ---
 
-## Architecture
-
-
-┌─────────────────────────────────────────────────────────────────┐
-│ CLIENT LAYER │
-│ React 18 + TypeScript + Vite + Tailwind CSS │
-│ Firebase Auth SDK │ Firebase Analytics SDK │
-└─────────────────────────────┬───────────────────────────────────┘
-│ HTTPS / REST
-│ Authorization: Bearer <Firebase JWT>
-┌─────────────────────────────▼───────────────────────────────────┐
-│ API GATEWAY LAYER │
-│ FastAPI on Google Cloud Run (Python 3.11) │
-│ Auth Middleware │ Rate Limiter │ Input Validation │
-│ CORS Policy │ Request Logging │ Rate Limit Headers │
-└──────┬──────────┬───────────┬──────────────┬────────────────────┘
-│ │ │ │
-┌──────▼──┐ ┌────▼────┐ ┌────▼────┐ ┌──────▼──────┐
-│ Carbon │ │ Recom- │ │ AI │ │ Prediction │
-│ Engine │ │mendation│ │Assistant│ │ Engine │
-│ Service │ │ Service │ │ Service │ │ Service │
-└──────┬──┘ └────┬────┘ └────┬────┘ └──────┬──────┘
-│ │ │ │
-┌──────▼──────────▼───────────▼──────────────▼──────────────────┐
-│ DOMAIN LAYER │
-│ Emission Factors │ Scoring Algorithms │ Behavioral Models │
-│ (Pure functions — no framework dependencies) │
-└──────────────────────────────┬─────────────────────────────────┘
-│
-┌──────────────────────────────▼─────────────────────────────────┐
-│ INFRASTRUCTURE LAYER │
-│ Cloud Firestore │ Vertex AI Gemini │ Firebase Admin SDK │
-└─────────────────────────────────────────────────────────────────┘
-
-
 ### Clean Architecture Layers
 
 | Layer | Responsibility | Key Files |
@@ -305,106 +270,82 @@ Real-time progress bar showing daily rate vs budget
 Status: On Track / Close to Limit / Over Budget
 Drives commitment through the financial budget metaphor
 
-Security
-Authentication
-Firebase Authentication with RS256 JWT (Google public key infrastructure)
-All protected endpoints verify token via firebase_admin.auth.verify_id_token()
-User ID extracted from verified token only — never from request parameters
-Data Isolation
-JavaScript
 
-// Firestore Security Rules — Default deny-all
-match /{document=**} {
-  allow read, write: if false;  // Deny everything not explicitly granted
-}
-
-// User data: UID-isolated
-match /users/{uid}/{document=**} {
-  allow read, write: if request.auth != null && request.auth.uid == uid;
-}
-API Security
-Protection	Implementation
-Rate limiting	20 AI requests/hour, 100 general requests/minute per user
-Input validation	Pydantic Field constraints (ge=0, le=2000) on all inputs
-CORS	Restricted to specific production frontend domains only
-Secret management	All secrets via environment variables, .gitignore enforced
-AI safety	BLOCK_MEDIUM_AND_ABOVE for harassment/hate speech
-Log privacy	User IDs truncated to 8 characters in all log entries
-HTTP Security Headers
-JSON
-
-"X-Frame-Options": "DENY",
-"X-Content-Type-Options": "nosniff",
-"Referrer-Policy": "strict-origin-when-cross-origin",
-"Permissions-Policy": "camera=(), microphone=(), geolocation=()"
-Accessibility
-
+## Accessibility
 ACIA follows accessibility-focused design principles including keyboard navigation, ARIA support, reduced motion support, focus management, and inclusive UI practices.
 
 ---
 
 ### Local Development
-Prerequisites
+Prerequisites: 
 Python 3.11+
 Node.js 18+
 Google Cloud SDK
 Firebase CLI
-Backend Setup
-Bash
 
+## Backend Setup
+```
 cd backend
-
+```
 ### Create virtual environment
+```
 python -m venv .venv
 .venv\Scripts\activate.bat  # Windows
 source .venv/bin/activate   # Linux/Mac
-
+```
 ### Install dependencies
+```
 pip install -r requirements.txt
-
+```
 ### Configure environment
+```
 cp .env.example .env
-#### Fill in .env with your Firebase and Google Cloud credentials
+```
+Fill in .env with your Firebase and Google Cloud credentials
 
 ### Run development server
+```
 uvicorn main:app --reload --port 8000
-Frontend Setup
-Bash
-
+```
+## Frontend Setup
+```
 cd frontend
-
+```
 ### Install dependencies
+```
 npm install
-
+```
 ### Configure environment
+```
 cp .env.example .env.local
-#### Fill in .env.local with Firebase config values
+```
+Fill in .env.local with Firebase config values
 
 ### Run development server
+```
 npm run dev
-
+```
 ## Environment Variables
 #### Backend (backend/.env):
-
+```
 FIREBASE_PROJECT_ID=your-project-id
 GOOGLE_APPLICATION_CREDENTIALS=./service-account-key.json
 VERTEX_AI_PROJECT_ID=your-project-id
 VERTEX_AI_LOCATION=us-central1
 VERTEX_AI_MODEL=gemini-2.5-flash
 ENVIRONMENT=development
-
+```
 #### Frontend (frontend/.env.local):
-
+```
 VITE_FIREBASE_API_KEY=your-api-key
 VITE_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
 VITE_FIREBASE_PROJECT_ID=your-project-id
 VITE_FIREBASE_APP_ID=your-app-id
 VITE_API_BASE_URL=http://localhost:8000
-
+```
 ### Deployment
 #### Backend — Google Cloud Run
-Bash
-
+```
 gcloud run deploy acia-backend \
   --source . \
   --region us-central1 \
@@ -412,15 +353,14 @@ gcloud run deploy acia-backend \
   --allow-unauthenticated \
   --service-account=acia-backend-sa@PROJECT_ID.iam.gserviceaccount.com \
   --set-env-vars="ENVIRONMENT=production,FIREBASE_PROJECT_ID=PROJECT_ID,VERTEX_AI_PROJECT_ID=PROJECT_ID"
-
+```
 #### Frontend — Firebase Hosting
-Bash
-
+```
 cd frontend
 npm run build
 cd ..
 firebase deploy --only hosting
-
+```
 ### Key Endpoints
 | Method | Endpoint | Description |
 |---|---|---|
@@ -452,7 +392,7 @@ All food values use kg CO₂e including methane (CH₄, GWP100 = 27.9) from live
 
 
 ### The Behavioral Intelligence Loop
-
+```
 User completes onboarding
          │
          ▼
@@ -483,3 +423,4 @@ Next recommendation request uses updated weights
 CII Score updates reflecting behavioral change
          │
          └── Loop continues, system learns, user improves
+```
